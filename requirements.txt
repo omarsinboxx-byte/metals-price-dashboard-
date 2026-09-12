@@ -1,0 +1,4 @@
+requests>=2.31
+beautifulsoup4>=4.12
+# Optional, only needed if a dealer renders prices with JavaScript (USE_PLAYWRIGHT=1):
+# playwright>=1.44

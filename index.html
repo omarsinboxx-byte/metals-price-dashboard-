@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Metals spot — dealer comparison</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0e1116;
+    --panel: #161b22;
+    --panel-2: #1b2129;
+    --line: #262d38;
+    --line-soft: #1e242d;
+    --text: #e6eaf0;
+    --muted: #8a94a3;
+    --faint: #5c6572;
+    --up: #3fb950;
+    --down: #f85149;
+    --gold: #e6b422;
+    --silver: #c2ccd6;
+    --platinum: #7fa8c9;
+    --palladium: #b79cd0;
+    --best: #22c55e;
+    --sans: "Space Grotesk", ui-sans-serif, system-ui, -apple-system, sans-serif;
+    --mono: "JetBrains Mono", ui-monospace, "SFMono-Regular", Menlo, monospace;
+  }
+  @media (prefers-color-scheme: light) {
+    :root:not([data-theme="dark"]) {
+      --bg: #f5f6f8; --panel: #ffffff; --panel-2: #f0f2f5;
+      --line: #dde1e7; --line-soft: #e8ebef;
+      --text: #12161c; --muted: #5b6472; --faint: #8891a0;
+      --gold: #a67c00; --silver: #6b7683; --platinum: #2e6b96; --palladium: #7a5ea0;
+    }
+  }
+  :root[data-theme="dark"] { color-scheme: dark; }
+
+  * { box-sizing: border-box; }
+  html, body { margin: 0; }
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--sans);
+    line-height: 1.4;
+    -webkit-font-smoothing: antialiased;
+    padding: clamp(16px, 4vw, 48px);
+  }
+  .wrap { max-width: 920px; margin: 0 auto; }
+
+  header.top {
+    display: flex; align-items: flex-end; justify-content: space-between;
+    gap: 20px; flex-wrap: wrap; margin-bottom: 22px;
+  }
+  h1 {
+    font-size: clamp(22px, 3.6vw, 30px);
+    font-weight: 700; letter-spacing: -0.02em; margin: 0 0 4px;
+  }
+  .sub { color: var(--muted); font-size: 13.5px; }
+  .status { display: flex; align-items: center; gap: 12px; }
+  .stamp { text-align: right; font-size: 12.5px; color: var(--muted); }
+  .stamp b { color: var(--text); font-weight: 500; }
+  button.refresh {
+    font-family: var(--sans); font-size: 13px; font-weight: 500;
+    color: var(--text); background: var(--panel-2);
+    border: 1px solid var(--line); border-radius: 8px;
+    padding: 8px 12px; cursor: pointer; display: inline-flex; align-items: center; gap: 7px;
+    transition: border-color .15s ease, background .15s ease;
+  }
+  button.refresh:hover { border-color: var(--faint); background: var(--panel); }
+  button.refresh:focus-visible { outline: 2px solid var(--platinum); outline-offset: 2px; }
+  button.refresh svg { width: 14px; height: 14px; }
+  button.refresh.spin svg { animation: spin .7s linear infinite; }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  .badge {
+    display: inline-block; font-size: 11.5px; font-weight: 500;
+    padding: 3px 9px; border-radius: 999px; border: 1px solid;
+  }
+  .badge.sample { color: #f0b429; border-color: #6b5410; background: #241d07; }
+  .badge.live { color: var(--up); border-color: #17361f; background: #0d1f12; }
+
+  .board {
+    background: var(--panel); border: 1px solid var(--line);
+    border-radius: 14px; overflow: hidden;
+  }
+  .scroll { overflow-x: auto; }
+  table { width: 100%; border-collapse: collapse; min-width: 640px; }
+  th, td { text-align: right; padding: 14px 16px; white-space: nowrap; }
+  thead th {
+    font-size: 13px; font-weight: 500; color: var(--muted);
+    border-bottom: 1px solid var(--line); vertical-align: bottom;
+  }
+  thead th .metal { display: inline-flex; align-items: center; gap: 8px; color: var(--text); font-weight: 600; font-size: 15px; }
+  thead th .unit { display: block; font-size: 11px; color: var(--faint); font-weight: 400; margin-top: 2px; }
+  .dot { width: 9px; height: 9px; border-radius: 50%; flex: none; }
+  th.corner, td.dealer {
+    text-align: left; position: sticky; left: 0;
+    background: var(--panel); z-index: 1;
+  }
+  td.dealer { border-right: 1px solid var(--line-soft); }
+  .dealer a { color: var(--text); text-decoration: none; font-weight: 600; font-size: 15px; }
+  .dealer a:hover { color: var(--platinum); text-decoration: underline; }
+  .dealer .host { display: block; font-size: 11.5px; color: var(--faint); font-weight: 400; margin-top: 1px; }
+
+  tbody tr { border-bottom: 1px solid var(--line-soft); }
+  tbody tr:last-child { border-bottom: none; }
+  tbody tr:hover td:not(.dealer) { background: var(--panel-2); }
+
+  .price { font-family: var(--mono); font-size: 16px; font-weight: 500; font-variant-numeric: tabular-nums; }
+  .price.stale { color: var(--faint); }
+  .chg { font-family: var(--mono); font-size: 12px; font-variant-numeric: tabular-nums; margin-top: 3px; }
+  .chg.up { color: var(--up); } .chg.down { color: var(--down); } .chg.flat { color: var(--faint); }
+  .na { color: var(--faint); font-family: var(--mono); }
+
+  td.cell { position: relative; }
+  td.cell.best::before {
+    content: ""; position: absolute; inset: 0;
+    border-left: 3px solid var(--best);
+    background: linear-gradient(90deg, rgba(34,197,94,.09), transparent 60%);
+    pointer-events: none;
+  }
+  .cellwrap { position: relative; }
+  .besttag {
+    display: inline-block; font-size: 9.5px; font-weight: 700; letter-spacing: .04em;
+    color: var(--best); border: 1px solid #1c4a2c; border-radius: 4px;
+    padding: 0 5px; margin-bottom: 4px;
+  }
+
+  tfoot td { border-top: 1px solid var(--line); padding-top: 14px; }
+  tfoot .label { text-align: left; color: var(--muted); font-size: 13px; }
+  tfoot .spread { font-family: var(--mono); font-size: 13.5px; font-variant-numeric: tabular-nums; color: var(--text); }
+  tfoot .spread small { color: var(--faint); }
+  tfoot .cheap { font-family: var(--sans); font-size: 13px; font-weight: 600; color: var(--best); }
+
+  .note { color: var(--muted); font-size: 12.5px; margin-top: 16px; line-height: 1.6; }
+  .note code { font-family: var(--mono); font-size: 11.5px; background: var(--panel-2); padding: 1px 5px; border-radius: 4px; border: 1px solid var(--line-soft); }
+  .warn {
+    margin-top: 14px; padding: 11px 14px; border-radius: 10px; font-size: 13px;
+    background: #241d07; border: 1px solid #6b5410; color: #f0c674; display: none;
+  }
+  .warn.show { display: block; }
+
+  @media (prefers-reduced-motion: reduce) {
+    button.refresh.spin svg { animation: none; }
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="top">
+    <div>
+      <h1>Metals spot — dealer comparison</h1>
+      <div class="sub">Live ask prices across four bullion dealers, per troy ounce (USD)</div>
+    </div>
+    <div class="status">
+      <div class="stamp">
+        <span id="dataBadge" class="badge sample">sample data</span><br>
+        <span style="display:inline-block;margin-top:6px">updated <b id="updated">—</b></span>
+      </div>
+      <button class="refresh" id="refreshBtn" title="Reload prices.json">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a9 9 0 1 1-2.64-6.36"/><path d="M21 3v6h-6"/></svg>
+        Refresh
+      </button>
+    </div>
+  </header>
+
+  <div class="warn" id="warn"></div>
+
+  <div class="board">
+    <div class="scroll">
+      <table>
+        <thead>
+          <tr id="head"></tr>
+        </thead>
+        <tbody id="body"></tbody>
+        <tfoot id="foot"></tfoot>
+      </table>
+    </div>
+  </div>
+
+  <p class="note">
+    Spot prices come from the same commodity feed, so dealers land within pennies of each other — the useful signal is the <b>Best buy</b> row (lowest ask per metal) and the <b>Spread</b> (max − min).
+    A dealer's row greys out and keeps its last-known value when a scrape fails.
+    Data refreshes when the GitHub Action rewrites <code>data/prices.json</code>.
+  </p>
+</div>
+
+<script>
+// Fallback shown when data/prices.json is missing (e.g. a standalone preview before the
+// scraper has run). The GitHub Action overwrites data/prices.json with real values.
+const SAMPLE_DATA = {
+  updated_utc: "2026-09-12T15:30:00Z",
+  sample: true,
+  metals: ["gold", "silver", "platinum", "palladium"],
+  dealers: {
+    jmbullion:   { name: "JM Bullion",   url: "https://www.jmbullion.com",   ok: true, updated_utc: "2026-09-12T15:30:00Z", prices: {
+      gold:{ask:4362.28,change:37.70}, silver:{ask:65.22,change:1.24}, platinum:{ask:1806.60,change:18.90}, palladium:{ask:1318.00,change:16.05} } },
+    apmex:       { name: "APMEX",         url: "https://www.apmex.com",       ok: true, updated_utc: "2026-09-12T15:30:00Z", prices: {
+      gold:{ask:4364.90,change:38.10}, silver:{ask:65.30,change:1.26}, platinum:{ask:1809.40,change:19.20}, palladium:{ask:1321.50,change:16.40} } },
+    moneymetals: { name: "Money Metals",  url: "https://www.moneymetals.com", ok: true, updated_utc: "2026-09-12T15:30:00Z", prices: {
+      gold:{ask:4361.15,change:37.55}, silver:{ask:65.18,change:1.22}, platinum:{ask:1805.10,change:18.60}, palladium:{ask:1317.20,change:15.90} } },
+    sdbullion:   { name: "SD Bullion",    url: "https://sdbullion.com",       ok: true, updated_utc: "2026-09-12T15:30:00Z", prices: {
+      gold:{ask:4363.40,change:37.90}, silver:{ask:65.25,change:1.25}, platinum:{ask:1804.80,change:18.40}, palladium:{ask:1319.75,change:16.20} } }
+  }
+};
+
+const META = {
+  gold:      { label: "Gold",      color: "var(--gold)" },
+  silver:    { label: "Silver",    color: "var(--silver)" },
+  platinum:  { label: "Platinum",  color: "var(--platinum)" },
+  palladium: { label: "Palladium", color: "var(--palladium)" }
+};
+const DEALER_ORDER = ["jmbullion", "apmex", "moneymetals", "sdbullion"];
+
+const fmt = n => (n == null || isNaN(n)) ? null :
+  n.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+
+function relTime(iso) {
+  if (!iso) return "—";
+  const t = new Date(iso).getTime();
+  if (isNaN(t)) return "—";
+  const s = Math.round((Date.now() - t) / 1000);
+  if (s < 45) return "just now";
+  if (s < 5400) return Math.round(s / 60) + "m ago";
+  if (s < 129600) return Math.round(s / 3600) + "h ago";
+  return Math.round(s / 86400) + "d ago";
+}
+function host(url) { try { return new URL(url).host.replace(/^www\./, ""); } catch { return ""; } }
+
+function render(data) {
+  const metals = data.metals || Object.keys(META);
+
+  // header
+  const head = document.getElementById("head");
+  head.innerHTML = '<th class="corner"></th>' + metals.map(m => {
+    const meta = META[m] || { label: m, color: "var(--muted)" };
+    return `<th><span class="metal"><span class="dot" style="background:${meta.color}"></span>${meta.label}</span><span class="unit">USD / oz</span></th>`;
+  }).join("");
+
+  // find lowest ask per metal (best buy)
+  const best = {};
+  metals.forEach(m => {
+    let bd = null, bv = Infinity;
+    DEALER_ORDER.forEach(id => {
+      const d = data.dealers[id]; if (!d) return;
+      const v = d.prices?.[m]?.ask;
+      if (v != null && !isNaN(v) && v < bv) { bv = v; bd = id; }
+    });
+    if (bd) best[m] = bd;
+  });
+
+  // rows
+  const body = document.getElementById("body");
+  body.innerHTML = DEALER_ORDER.map(id => {
+    const d = data.dealers[id]; if (!d) return "";
+    const stale = d.ok === false;
+    const cells = metals.map(m => {
+      const p = d.prices?.[m];
+      if (!p || p.ask == null || isNaN(p.ask)) return `<td class="cell"><span class="na">—</span></td>`;
+      const isBest = best[m] === id;
+      const chg = p.change;
+      let chgHtml = '<div class="chg flat">—</div>';
+      if (chg != null && !isNaN(chg)) {
+        const dir = chg > 0 ? "up" : chg < 0 ? "down" : "flat";
+        const arw = chg > 0 ? "▲" : chg < 0 ? "▼" : "•";
+        chgHtml = `<div class="chg ${dir}">${arw} ${fmt(Math.abs(chg))}</div>`;
+      }
+      return `<td class="cell${isBest ? " best" : ""}"><div class="cellwrap">${isBest ? '<div class="besttag">BEST</div>' : ""}<div class="price${stale ? " stale" : ""}">$${fmt(p.ask)}</div>${chgHtml}</div></td>`;
+    }).join("");
+    return `<tr><td class="dealer"><a href="${d.url}" target="_blank" rel="noopener">${d.name}</a><span class="host">${stale ? "stale · " : ""}${host(d.url)}</span></td>${cells}</tr>`;
+  }).join("");
+
+  // footer: best buy + spread
+  const foot = document.getElementById("foot");
+  const cheapRow = metals.map(m => {
+    const id = best[m];
+    return `<td class="cheap">${id ? (data.dealers[id]?.name || id) : "—"}</td>`;
+  }).join("");
+  const spreadRow = metals.map(m => {
+    const vals = DEALER_ORDER.map(id => data.dealers[id]?.prices?.[m]?.ask).filter(v => v != null && !isNaN(v));
+    if (vals.length < 2) return `<td class="spread"><small>—</small></td>`;
+    const sp = Math.max(...vals) - Math.min(...vals);
+    return `<td class="spread">$${fmt(sp)}</td>`;
+  }).join("");
+  foot.innerHTML =
+    `<tr><td class="label dealer">Best buy</td>${cheapRow}</tr>` +
+    `<tr><td class="label dealer">Spread <small style="color:var(--faint)">(max−min)</small></td>${spreadRow}</tr>`;
+
+  // status
+  document.getElementById("updated").textContent = relTime(data.updated_utc);
+  const badge = document.getElementById("dataBadge");
+  if (data.sample) { badge.className = "badge sample"; badge.textContent = "sample data"; }
+  else { badge.className = "badge live"; badge.textContent = "live"; }
+
+  // warn if any dealer failed
+  const failed = DEALER_ORDER.filter(id => data.dealers[id]?.ok === false).map(id => data.dealers[id].name);
+  const warn = document.getElementById("warn");
+  if (failed.length) { warn.className = "warn show"; warn.textContent = `Last scrape couldn't read: ${failed.join(", ")}. Showing last-known values.`; }
+  else { warn.className = "warn"; }
+}
+
+async function load() {
+  const btn = document.getElementById("refreshBtn");
+  btn.classList.add("spin");
+  try {
+    const res = await fetch("data/prices.json?t=" + Date.now(), { cache: "no-store" });
+    if (!res.ok) throw new Error(res.status);
+    render(await res.json());
+  } catch (e) {
+    render(SAMPLE_DATA);
+  } finally {
+    setTimeout(() => btn.classList.remove("spin"), 400);
+  }
+}
+
+document.getElementById("refreshBtn").addEventListener("click", load);
+load();
+setInterval(load, 120000); // re-check every 2 min
+</script>
+</body>
+</html>
