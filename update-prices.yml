@@ -1,0 +1,46 @@
+name: Update metal prices
+
+on:
+  schedule:
+    - cron: "*/30 * * * *"   # every 30 min (UTC; GitHub may delay a few min)
+  workflow_dispatch:          # lets you run it manually from the Actions tab
+
+permissions:
+  contents: write             # required so the workflow can commit prices.json
+
+concurrency:
+  group: update-prices
+  cancel-in-progress: false
+
+jobs:
+  scrape:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install dependencies
+        run: |
+          pip install -r requirements.txt
+          pip install playwright
+          python -m playwright install --with-deps chromium
+
+      - name: Scrape prices
+        run: python scrape.py
+
+      - name: Commit if changed
+        run: |
+          git config user.name  "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          if [[ -n "$(git status --porcelain data/prices.json)" ]]; then
+            git add data/prices.json
+            git commit -m "chore: update spot prices [skip ci]"
+            git push
+          else
+            echo "No price change."
+          fi

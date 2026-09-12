@@ -6,162 +6,281 @@
 <title>Metals spot — dealer comparison</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+<script>
+  // Set theme before first paint to avoid a flash.
+  (function () {
+    try {
+      var t = localStorage.getItem("theme");
+      if (!t) t = matchMedia("(prefers-color-scheme: light)").matches ? "light" : "dark";
+      document.documentElement.setAttribute("data-theme", t);
+    } catch (e) { document.documentElement.setAttribute("data-theme", "dark"); }
+  })();
+</script>
 <style>
-  :root {
-    --bg: #0e1116;
-    --panel: #161b22;
-    --panel-2: #1b2129;
-    --line: #262d38;
-    --line-soft: #1e242d;
-    --text: #e6eaf0;
-    --muted: #8a94a3;
-    --faint: #5c6572;
-    --up: #3fb950;
-    --down: #f85149;
-    --gold: #e6b422;
-    --silver: #c2ccd6;
-    --platinum: #7fa8c9;
-    --palladium: #b79cd0;
-    --best: #22c55e;
-    --sans: "Space Grotesk", ui-sans-serif, system-ui, -apple-system, sans-serif;
-    --mono: "JetBrains Mono", ui-monospace, "SFMono-Regular", Menlo, monospace;
+  :root[data-theme="dark"] {
+    --bg: #0a0c11;
+    --bg-glow: #10151d;
+    --panel: #12171f;
+    --panel-2: #171d27;
+    --elevated: #1b222d;
+    --line: #232b37;
+    --line-soft: #1b212b;
+    --text: #eef2f8;
+    --muted: #8b96a6;
+    --faint: #5b6473;
+    --up: #34d399;
+    --down: #fb7185;
+    --gold: #e8b84b;
+    --silver: #c6d0da;
+    --platinum: #6fb3d9;
+    --palladium: #c79be0;
+    --best: #34d399;
+    --best-bg: rgba(52,211,153,.10);
+    --best-line: #1f7a58;
+    --flash: rgba(111,179,217,.22);
+    --shadow: 0 24px 60px -24px rgba(0,0,0,.75), 0 2px 8px rgba(0,0,0,.4);
+    --overlay: rgba(6,8,12,.66);
+    color-scheme: dark;
   }
-  @media (prefers-color-scheme: light) {
-    :root:not([data-theme="dark"]) {
-      --bg: #f5f6f8; --panel: #ffffff; --panel-2: #f0f2f5;
-      --line: #dde1e7; --line-soft: #e8ebef;
-      --text: #12161c; --muted: #5b6472; --faint: #8891a0;
-      --gold: #a67c00; --silver: #6b7683; --platinum: #2e6b96; --palladium: #7a5ea0;
-    }
+  :root[data-theme="light"] {
+    --bg: #eef1f5;
+    --bg-glow: #e4e9f0;
+    --panel: #ffffff;
+    --panel-2: #f5f7fa;
+    --elevated: #ffffff;
+    --line: #e1e6ee;
+    --line-soft: #eaeef3;
+    --text: #121722;
+    --muted: #5a6472;
+    --faint: #939cab;
+    --up: #059669;
+    --down: #e11d48;
+    --gold: #a9791a;
+    --silver: #64707e;
+    --platinum: #206a94;
+    --palladium: #7a49a6;
+    --best: #059669;
+    --best-bg: rgba(5,150,105,.08);
+    --best-line: #34b98a;
+    --flash: rgba(32,106,148,.14);
+    --shadow: 0 20px 50px -28px rgba(19,32,55,.28), 0 1px 3px rgba(19,32,55,.08);
+    --overlay: rgba(30,40,58,.28);
+    color-scheme: light;
   }
-  :root[data-theme="dark"] { color-scheme: dark; }
 
   * { box-sizing: border-box; }
   html, body { margin: 0; }
   body {
-    background: var(--bg);
+    background:
+      radial-gradient(1200px 520px at 78% -8%, var(--bg-glow), transparent 60%),
+      var(--bg);
     color: var(--text);
-    font-family: var(--sans);
+    font-family: "Space Grotesk", ui-sans-serif, system-ui, -apple-system, sans-serif;
     line-height: 1.4;
     -webkit-font-smoothing: antialiased;
-    padding: clamp(16px, 4vw, 48px);
+    padding: clamp(16px, 4vw, 52px);
+    min-height: 100vh;
+    transition: background-color .3s ease, color .3s ease;
   }
-  .wrap { max-width: 920px; margin: 0 auto; }
+  .wrap { max-width: 940px; margin: 0 auto; }
 
+  /* ---- header ---- */
   header.top {
-    display: flex; align-items: flex-end; justify-content: space-between;
-    gap: 20px; flex-wrap: wrap; margin-bottom: 22px;
+    display: flex; align-items: flex-start; justify-content: space-between;
+    gap: 20px; flex-wrap: wrap; margin-bottom: 24px;
   }
-  h1 {
-    font-size: clamp(22px, 3.6vw, 30px);
-    font-weight: 700; letter-spacing: -0.02em; margin: 0 0 4px;
+  .brand h1 {
+    font-size: clamp(23px, 3.6vw, 32px);
+    font-weight: 700; letter-spacing: -.025em; margin: 0 0 6px; line-height: 1.05;
   }
-  .sub { color: var(--muted); font-size: 13.5px; }
-  .status { display: flex; align-items: center; gap: 12px; }
-  .stamp { text-align: right; font-size: 12.5px; color: var(--muted); }
-  .stamp b { color: var(--text); font-weight: 500; }
-  button.refresh {
-    font-family: var(--sans); font-size: 13px; font-weight: 500;
-    color: var(--text); background: var(--panel-2);
-    border: 1px solid var(--line); border-radius: 8px;
-    padding: 8px 12px; cursor: pointer; display: inline-flex; align-items: center; gap: 7px;
-    transition: border-color .15s ease, background .15s ease;
+  .brand .sub { color: var(--muted); font-size: 13.5px; margin-bottom: 12px; }
+  .dots { display: flex; gap: 14px; }
+  .dots span { display: inline-flex; align-items: center; gap: 6px; font-size: 12px; color: var(--muted); }
+  .dots i { width: 8px; height: 8px; border-radius: 50%; display: inline-block; }
+
+  .controls { display: flex; align-items: center; gap: 10px; }
+  .stamp { text-align: right; font-size: 12px; color: var(--muted); line-height: 1.5; margin-right: 2px; }
+  .stamp b { color: var(--text); font-weight: 600; }
+  .pill {
+    display: inline-flex; align-items: center; gap: 6px;
+    font-size: 11px; font-weight: 600; padding: 3px 9px; border-radius: 999px; border: 1px solid;
   }
-  button.refresh:hover { border-color: var(--faint); background: var(--panel); }
-  button.refresh:focus-visible { outline: 2px solid var(--platinum); outline-offset: 2px; }
-  button.refresh svg { width: 14px; height: 14px; }
-  button.refresh.spin svg { animation: spin .7s linear infinite; }
+  .pill i { width: 6px; height: 6px; border-radius: 50%; display: inline-block; }
+  .pill.sample { color: #e0a72b; border-color: color-mix(in srgb, #e0a72b 40%, transparent); background: color-mix(in srgb, #e0a72b 12%, transparent); }
+  .pill.sample i { background: #e0a72b; }
+  .pill.live { color: var(--up); border-color: color-mix(in srgb, var(--up) 40%, transparent); background: color-mix(in srgb, var(--up) 12%, transparent); }
+  .pill.live i { background: var(--up); box-shadow: 0 0 0 0 color-mix(in srgb, var(--up) 70%, transparent); animation: ping 2.4s ease-out infinite; }
+  @keyframes ping { 0% { box-shadow: 0 0 0 0 color-mix(in srgb, var(--up) 60%, transparent); } 70%,100% { box-shadow: 0 0 0 7px transparent; } }
+
+  .iconbtn {
+    display: inline-flex; align-items: center; justify-content: center;
+    width: 38px; height: 38px; border-radius: 10px; cursor: pointer;
+    color: var(--text); background: var(--panel-2); border: 1px solid var(--line);
+    transition: border-color .15s ease, background .15s ease, transform .1s ease;
+  }
+  .iconbtn:hover { border-color: var(--faint); }
+  .iconbtn:active { transform: scale(.94); }
+  .iconbtn:focus-visible { outline: 2px solid var(--platinum); outline-offset: 2px; }
+  .iconbtn svg { width: 17px; height: 17px; }
+  #refreshBtn.spin svg { animation: spin .7s linear infinite; }
   @keyframes spin { to { transform: rotate(360deg); } }
 
-  .badge {
-    display: inline-block; font-size: 11.5px; font-weight: 500;
-    padding: 3px 9px; border-radius: 999px; border: 1px solid;
-  }
-  .badge.sample { color: #f0b429; border-color: #6b5410; background: #241d07; }
-  .badge.live { color: var(--up); border-color: #17361f; background: #0d1f12; }
-
+  /* ---- board ---- */
   .board {
     background: var(--panel); border: 1px solid var(--line);
-    border-radius: 14px; overflow: hidden;
+    border-radius: 16px; overflow: hidden; box-shadow: var(--shadow);
   }
   .scroll { overflow-x: auto; }
-  table { width: 100%; border-collapse: collapse; min-width: 640px; }
-  th, td { text-align: right; padding: 14px 16px; white-space: nowrap; }
+  table { width: 100%; border-collapse: collapse; min-width: 660px; }
+  th, td { text-align: right; padding: 15px 18px; white-space: nowrap; }
+
   thead th {
-    font-size: 13px; font-weight: 500; color: var(--muted);
     border-bottom: 1px solid var(--line); vertical-align: bottom;
+    font-weight: 500; font-size: 13px; color: var(--muted);
   }
-  thead th .metal { display: inline-flex; align-items: center; gap: 8px; color: var(--text); font-weight: 600; font-size: 15px; }
-  thead th .unit { display: block; font-size: 11px; color: var(--faint); font-weight: 400; margin-top: 2px; }
-  .dot { width: 9px; height: 9px; border-radius: 50%; flex: none; }
+  thead th.metalcol { cursor: pointer; user-select: none; transition: background .15s ease; }
+  thead th.metalcol:hover { background: var(--panel-2); }
+  thead th.metalcol:focus-visible { outline: 2px solid var(--platinum); outline-offset: -2px; }
+  .metalhead { display: inline-flex; align-items: center; gap: 8px; color: var(--text); font-weight: 600; font-size: 15.5px; }
+  .metalhead .dot { width: 9px; height: 9px; border-radius: 50%; flex: none; }
+  .metalhead .chev { opacity: .45; transition: transform .15s ease, opacity .15s ease; }
+  thead th.metalcol:hover .chev { opacity: .9; transform: translateY(1px); }
+  .unit { display: block; font-size: 11px; color: var(--faint); font-weight: 400; margin-top: 3px; }
+
   th.corner, td.dealer {
-    text-align: left; position: sticky; left: 0;
-    background: var(--panel); z-index: 1;
+    text-align: left; position: sticky; left: 0; background: var(--panel); z-index: 1;
   }
   td.dealer { border-right: 1px solid var(--line-soft); }
   .dealer a { color: var(--text); text-decoration: none; font-weight: 600; font-size: 15px; }
-  .dealer a:hover { color: var(--platinum); text-decoration: underline; }
-  .dealer .host { display: block; font-size: 11.5px; color: var(--faint); font-weight: 400; margin-top: 1px; }
+  .dealer a:hover { color: var(--platinum); }
+  .dealer .host { display: block; font-size: 11.5px; color: var(--faint); font-weight: 400; margin-top: 2px; }
 
   tbody tr { border-bottom: 1px solid var(--line-soft); }
   tbody tr:last-child { border-bottom: none; }
   tbody tr:hover td:not(.dealer) { background: var(--panel-2); }
 
-  .price { font-family: var(--mono); font-size: 16px; font-weight: 500; font-variant-numeric: tabular-nums; }
-  .price.stale { color: var(--faint); }
-  .chg { font-family: var(--mono); font-size: 12px; font-variant-numeric: tabular-nums; margin-top: 3px; }
-  .chg.up { color: var(--up); } .chg.down { color: var(--down); } .chg.flat { color: var(--faint); }
-  .na { color: var(--faint); font-family: var(--mono); }
-
   td.cell { position: relative; }
+  .price { font-family: "JetBrains Mono", ui-monospace, monospace; font-size: 16.5px; font-weight: 500; font-variant-numeric: tabular-nums; letter-spacing: -.01em; }
+  .price.stale { color: var(--faint); }
+  .chg { font-family: "JetBrains Mono", ui-monospace, monospace; font-size: 12px; font-variant-numeric: tabular-nums; margin-top: 4px; }
+  .chg.up { color: var(--up); } .chg.down { color: var(--down); } .chg.flat { color: var(--faint); }
+  .na { color: var(--faint); font-family: "JetBrains Mono", ui-monospace, monospace; }
+
   td.cell.best::before {
     content: ""; position: absolute; inset: 0;
-    border-left: 3px solid var(--best);
-    background: linear-gradient(90deg, rgba(34,197,94,.09), transparent 60%);
+    border-left: 3px solid var(--best); background: linear-gradient(90deg, var(--best-bg), transparent 62%);
     pointer-events: none;
   }
   .cellwrap { position: relative; }
   .besttag {
-    display: inline-block; font-size: 9.5px; font-weight: 700; letter-spacing: .04em;
-    color: var(--best); border: 1px solid #1c4a2c; border-radius: 4px;
-    padding: 0 5px; margin-bottom: 4px;
+    display: inline-block; font-size: 9.5px; font-weight: 700; letter-spacing: .05em;
+    color: var(--best); border: 1px solid var(--best-line); border-radius: 4px; padding: 0 5px; margin-bottom: 5px;
+  }
+  td.cell.flash::after {
+    content: ""; position: absolute; inset: 0; background: var(--flash);
+    pointer-events: none; animation: fadeflash .9s ease forwards;
+  }
+  @keyframes fadeflash { from { opacity: 1; } to { opacity: 0; } }
+
+  tfoot td { border-top: 1px solid var(--line); padding-top: 15px; }
+  tfoot .label { text-align: left; color: var(--muted); font-size: 13px; }
+  tfoot .label small { color: var(--faint); }
+  tfoot .spread { font-family: "JetBrains Mono", ui-monospace, monospace; font-size: 13.5px; font-variant-numeric: tabular-nums; }
+  tfoot .cheap { font-weight: 600; font-size: 13px; color: var(--best); }
+
+  /* entrance */
+  @media (prefers-reduced-motion: no-preference) {
+    .board { animation: rise .5s cubic-bezier(.2,.7,.2,1) both; }
+    tbody tr.enter { animation: rowin .45s cubic-bezier(.2,.7,.2,1) both; animation-delay: calc(var(--i) * 55ms); }
+    @keyframes rise { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: none; } }
+    @keyframes rowin { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
   }
 
-  tfoot td { border-top: 1px solid var(--line); padding-top: 14px; }
-  tfoot .label { text-align: left; color: var(--muted); font-size: 13px; }
-  tfoot .spread { font-family: var(--mono); font-size: 13.5px; font-variant-numeric: tabular-nums; color: var(--text); }
-  tfoot .spread small { color: var(--faint); }
-  tfoot .cheap { font-family: var(--sans); font-size: 13px; font-weight: 600; color: var(--best); }
-
-  .note { color: var(--muted); font-size: 12.5px; margin-top: 16px; line-height: 1.6; }
-  .note code { font-family: var(--mono); font-size: 11.5px; background: var(--panel-2); padding: 1px 5px; border-radius: 4px; border: 1px solid var(--line-soft); }
+  .note { color: var(--muted); font-size: 12.5px; margin-top: 18px; line-height: 1.65; max-width: 78ch; }
+  .note b { color: var(--text); font-weight: 600; }
+  .note code { font-family: "JetBrains Mono", monospace; font-size: 11.5px; background: var(--panel-2); padding: 1px 5px; border-radius: 4px; border: 1px solid var(--line-soft); }
   .warn {
-    margin-top: 14px; padding: 11px 14px; border-radius: 10px; font-size: 13px;
-    background: #241d07; border: 1px solid #6b5410; color: #f0c674; display: none;
+    margin-top: 16px; padding: 12px 15px; border-radius: 12px; font-size: 13px;
+    background: color-mix(in srgb, #e0a72b 12%, transparent);
+    border: 1px solid color-mix(in srgb, #e0a72b 38%, transparent);
+    color: color-mix(in srgb, #e0a72b 82%, var(--text)); display: none;
   }
   .warn.show { display: block; }
 
-  @media (prefers-reduced-motion: reduce) {
-    button.refresh.spin svg { animation: none; }
+  /* ---- modal ---- */
+  .overlay {
+    position: fixed; inset: 0; background: var(--overlay); backdrop-filter: blur(6px);
+    display: none; align-items: center; justify-content: center; padding: 20px; z-index: 50;
   }
+  .overlay.open { display: flex; }
+  .modal {
+    width: 100%; max-width: 460px; background: var(--elevated); border: 1px solid var(--line);
+    border-radius: 18px; box-shadow: var(--shadow); overflow: hidden;
+  }
+  @media (prefers-reduced-motion: no-preference) {
+    .overlay.open .modal { animation: pop .28s cubic-bezier(.2,.8,.2,1) both; }
+    @keyframes pop { from { opacity: 0; transform: scale(.94) translateY(8px); } to { opacity: 1; transform: none; } }
+  }
+  .modal-head {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 18px 20px 14px; border-bottom: 1px solid var(--line-soft);
+  }
+  .modal-title { display: inline-flex; align-items: center; gap: 10px; font-size: 18px; font-weight: 700; letter-spacing: -.02em; }
+  .modal-title .dot { width: 11px; height: 11px; border-radius: 50%; }
+  .modal-title .u { font-size: 11.5px; color: var(--faint); font-weight: 400; margin-left: 2px; }
+  .modal-close {
+    width: 30px; height: 30px; border-radius: 8px; border: 1px solid var(--line);
+    background: var(--panel-2); color: var(--muted); cursor: pointer; font-size: 16px; line-height: 1;
+    display: inline-flex; align-items: center; justify-content: center;
+  }
+  .modal-close:hover { color: var(--text); border-color: var(--faint); }
+  .modal-close:focus-visible { outline: 2px solid var(--platinum); outline-offset: 2px; }
+  .rank { padding: 8px 12px 12px; }
+  .rankrow {
+    display: grid; grid-template-columns: 22px 1fr auto; align-items: center; gap: 12px;
+    padding: 12px 10px; border-radius: 10px;
+  }
+  .rankrow + .rankrow { border-top: 1px solid var(--line-soft); }
+  .rankrow.top { background: var(--best-bg); border-top: none; }
+  .rk { font-family: "JetBrains Mono", monospace; font-size: 12px; color: var(--faint); text-align: center; }
+  .rankrow.top .rk { color: var(--best); font-weight: 700; }
+  .rname { font-weight: 600; font-size: 14.5px; }
+  .rname .delta { display: block; font-size: 11.5px; color: var(--faint); font-weight: 400; margin-top: 1px; }
+  .rname .delta.best { color: var(--best); }
+  .rprice { text-align: right; }
+  .rprice .p { font-family: "JetBrains Mono", monospace; font-size: 15.5px; font-weight: 600; font-variant-numeric: tabular-nums; }
+  .rprice .c { font-family: "JetBrains Mono", monospace; font-size: 11px; font-variant-numeric: tabular-nums; margin-top: 1px; }
+  .rprice .c.up { color: var(--up); } .rprice .c.down { color: var(--down); } .rprice .c.flat { color: var(--faint); }
+  .modal-foot {
+    display: flex; justify-content: space-between; gap: 16px;
+    padding: 14px 20px 18px; border-top: 1px solid var(--line-soft);
+    font-size: 12.5px; color: var(--muted);
+  }
+  .modal-foot b { font-family: "JetBrains Mono", monospace; color: var(--text); font-weight: 600; font-variant-numeric: tabular-nums; }
 </style>
 </head>
 <body>
 <div class="wrap">
   <header class="top">
-    <div>
+    <div class="brand">
       <h1>Metals spot — dealer comparison</h1>
-      <div class="sub">Live ask prices across four bullion dealers, per troy ounce (USD)</div>
-    </div>
-    <div class="status">
-      <div class="stamp">
-        <span id="dataBadge" class="badge sample">sample data</span><br>
-        <span style="display:inline-block;margin-top:6px">updated <b id="updated">—</b></span>
+      <div class="sub">Live ask prices across four bullion dealers · USD per troy ounce</div>
+      <div class="dots">
+        <span><i style="background:var(--gold)"></i>Gold</span>
+        <span><i style="background:var(--silver)"></i>Silver</span>
+        <span><i style="background:var(--platinum)"></i>Platinum</span>
+        <span><i style="background:var(--palladium)"></i>Palladium</span>
       </div>
-      <button class="refresh" id="refreshBtn" title="Reload prices.json">
+    </div>
+    <div class="controls">
+      <div class="stamp">
+        <span id="dataBadge" class="pill sample"><i></i>sample</span><br>
+        <span style="display:inline-block;margin-top:7px">updated <b id="updated">—</b></span>
+      </div>
+      <button class="iconbtn" id="themeBtn" aria-label="Toggle light and dark mode" title="Toggle theme"></button>
+      <button class="iconbtn" id="refreshBtn" aria-label="Reload prices" title="Reload prices">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a9 9 0 1 1-2.64-6.36"/><path d="M21 3v6h-6"/></svg>
-        Refresh
       </button>
     </div>
   </header>
@@ -171,9 +290,7 @@
   <div class="board">
     <div class="scroll">
       <table>
-        <thead>
-          <tr id="head"></tr>
-        </thead>
+        <thead><tr id="head"></tr></thead>
         <tbody id="body"></tbody>
         <tfoot id="foot"></tfoot>
       </table>
@@ -181,15 +298,22 @@
   </div>
 
   <p class="note">
-    Spot prices come from the same commodity feed, so dealers land within pennies of each other — the useful signal is the <b>Best buy</b> row (lowest ask per metal) and the <b>Spread</b> (max − min).
-    A dealer's row greys out and keeps its last-known value when a scrape fails.
-    Data refreshes when the GitHub Action rewrites <code>data/prices.json</code>.
+    Spot comes off the same commodity feed, so dealers land within pennies of each other — the signal is the <b>Best buy</b> row (lowest ask per metal) and the <b>Spread</b> (max − min). Tap any metal to rank all four dealers. A dealer greys out and keeps its last value when a scrape fails. Data refreshes when the GitHub Action rewrites <code>data/prices.json</code>.
   </p>
 </div>
 
+<div class="overlay" id="overlay" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+  <div class="modal">
+    <div class="modal-head">
+      <span class="modal-title" id="modalTitle"></span>
+      <button class="modal-close" id="modalClose" aria-label="Close">✕</button>
+    </div>
+    <div class="rank" id="rank"></div>
+    <div class="modal-foot" id="modalFoot"></div>
+  </div>
+</div>
+
 <script>
-// Fallback shown when data/prices.json is missing (e.g. a standalone preview before the
-// scraper has run). The GitHub Action overwrites data/prices.json with real values.
 const SAMPLE_DATA = {
   updated_utc: "2026-09-12T15:30:00Z",
   sample: true,
@@ -214,13 +338,10 @@ const META = {
 };
 const DEALER_ORDER = ["jmbullion", "apmex", "moneymetals", "sdbullion"];
 
-const fmt = n => (n == null || isNaN(n)) ? null :
-  n.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
-
+const fmt = n => (n == null || isNaN(n)) ? null : n.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
 function relTime(iso) {
   if (!iso) return "—";
-  const t = new Date(iso).getTime();
-  if (isNaN(t)) return "—";
+  const t = new Date(iso).getTime(); if (isNaN(t)) return "—";
   const s = Math.round((Date.now() - t) / 1000);
   if (s < 45) return "just now";
   if (s < 5400) return Math.round(s / 60) + "m ago";
@@ -228,79 +349,152 @@ function relTime(iso) {
   return Math.round(s / 86400) + "d ago";
 }
 function host(url) { try { return new URL(url).host.replace(/^www\./, ""); } catch { return ""; } }
+function chgHtml(chg, cls) {
+  if (chg == null || isNaN(chg)) return `<div class="${cls} flat">—</div>`;
+  const dir = chg > 0 ? "up" : chg < 0 ? "down" : "flat";
+  const arw = chg > 0 ? "▲" : chg < 0 ? "▼" : "•";
+  return `<div class="${cls} ${dir}">${arw} ${fmt(Math.abs(chg))}</div>`;
+}
 
-function render(data) {
-  const metals = data.metals || Object.keys(META);
+let CURRENT = null;
+let firstRender = true;
+const lastAsk = {}; // dealer|metal -> ask, to flash changed cells
 
-  // header
-  const head = document.getElementById("head");
-  head.innerHTML = '<th class="corner"></th>' + metals.map(m => {
-    const meta = META[m] || { label: m, color: "var(--muted)" };
-    return `<th><span class="metal"><span class="dot" style="background:${meta.color}"></span>${meta.label}</span><span class="unit">USD / oz</span></th>`;
-  }).join("");
-
-  // find lowest ask per metal (best buy)
+function bestByMetal(data, metals) {
   const best = {};
   metals.forEach(m => {
     let bd = null, bv = Infinity;
     DEALER_ORDER.forEach(id => {
-      const d = data.dealers[id]; if (!d) return;
-      const v = d.prices?.[m]?.ask;
+      const v = data.dealers[id]?.prices?.[m]?.ask;
       if (v != null && !isNaN(v) && v < bv) { bv = v; bd = id; }
     });
     if (bd) best[m] = bd;
   });
+  return best;
+}
+
+function render(data) {
+  CURRENT = data;
+  const metals = data.metals || Object.keys(META);
+  const best = bestByMetal(data, metals);
+
+  // header (clickable metal columns)
+  document.getElementById("head").innerHTML = '<th class="corner"></th>' + metals.map(m => {
+    const meta = META[m] || { label: m, color: "var(--muted)" };
+    return `<th class="metalcol" data-metal="${m}" tabindex="0" role="button" aria-label="Rank dealers for ${meta.label}">
+      <span class="metalhead"><span class="dot" style="background:${meta.color}"></span>${meta.label}
+      <svg class="chev" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg></span>
+      <span class="unit">USD / oz</span></th>`;
+  }).join("");
 
   // rows
-  const body = document.getElementById("body");
-  body.innerHTML = DEALER_ORDER.map(id => {
+  document.getElementById("body").innerHTML = DEALER_ORDER.map((id, i) => {
     const d = data.dealers[id]; if (!d) return "";
     const stale = d.ok === false;
     const cells = metals.map(m => {
       const p = d.prices?.[m];
       if (!p || p.ask == null || isNaN(p.ask)) return `<td class="cell"><span class="na">—</span></td>`;
+      const key = id + "|" + m;
+      const changed = !firstRender && lastAsk[key] != null && lastAsk[key] !== p.ask;
+      lastAsk[key] = p.ask;
       const isBest = best[m] === id;
-      const chg = p.change;
-      let chgHtml = '<div class="chg flat">—</div>';
-      if (chg != null && !isNaN(chg)) {
-        const dir = chg > 0 ? "up" : chg < 0 ? "down" : "flat";
-        const arw = chg > 0 ? "▲" : chg < 0 ? "▼" : "•";
-        chgHtml = `<div class="chg ${dir}">${arw} ${fmt(Math.abs(chg))}</div>`;
-      }
-      return `<td class="cell${isBest ? " best" : ""}"><div class="cellwrap">${isBest ? '<div class="besttag">BEST</div>' : ""}<div class="price${stale ? " stale" : ""}">$${fmt(p.ask)}</div>${chgHtml}</div></td>`;
+      return `<td class="cell${isBest ? " best" : ""}${changed ? " flash" : ""}"><div class="cellwrap">${isBest ? '<div class="besttag">BEST</div>' : ""}<div class="price${stale ? " stale" : ""}">$${fmt(p.ask)}</div>${chgHtml(p.change, "chg")}</div></td>`;
     }).join("");
-    return `<tr><td class="dealer"><a href="${d.url}" target="_blank" rel="noopener">${d.name}</a><span class="host">${stale ? "stale · " : ""}${host(d.url)}</span></td>${cells}</tr>`;
+    return `<tr class="enter" style="--i:${i}"><td class="dealer"><a href="${d.url}" target="_blank" rel="noopener">${d.name}</a><span class="host">${stale ? "stale · " : ""}${host(d.url)}</span></td>${cells}</tr>`;
   }).join("");
 
-  // footer: best buy + spread
-  const foot = document.getElementById("foot");
-  const cheapRow = metals.map(m => {
-    const id = best[m];
-    return `<td class="cheap">${id ? (data.dealers[id]?.name || id) : "—"}</td>`;
-  }).join("");
+  // footer
+  const cheapRow = metals.map(m => `<td class="cheap">${best[m] ? (data.dealers[best[m]]?.name || best[m]) : "—"}</td>`).join("");
   const spreadRow = metals.map(m => {
     const vals = DEALER_ORDER.map(id => data.dealers[id]?.prices?.[m]?.ask).filter(v => v != null && !isNaN(v));
-    if (vals.length < 2) return `<td class="spread"><small>—</small></td>`;
-    const sp = Math.max(...vals) - Math.min(...vals);
-    return `<td class="spread">$${fmt(sp)}</td>`;
+    if (vals.length < 2) return `<td class="spread"><span style="color:var(--faint)">—</span></td>`;
+    return `<td class="spread">$${fmt(Math.max(...vals) - Math.min(...vals))}</td>`;
   }).join("");
-  foot.innerHTML =
+  document.getElementById("foot").innerHTML =
     `<tr><td class="label dealer">Best buy</td>${cheapRow}</tr>` +
-    `<tr><td class="label dealer">Spread <small style="color:var(--faint)">(max−min)</small></td>${spreadRow}</tr>`;
+    `<tr><td class="label dealer">Spread <small>(max−min)</small></td>${spreadRow}</tr>`;
 
   // status
   document.getElementById("updated").textContent = relTime(data.updated_utc);
   const badge = document.getElementById("dataBadge");
-  if (data.sample) { badge.className = "badge sample"; badge.textContent = "sample data"; }
-  else { badge.className = "badge live"; badge.textContent = "live"; }
+  if (data.sample) { badge.className = "pill sample"; badge.innerHTML = "<i></i>sample"; }
+  else { badge.className = "pill live"; badge.innerHTML = "<i></i>live"; }
 
-  // warn if any dealer failed
   const failed = DEALER_ORDER.filter(id => data.dealers[id]?.ok === false).map(id => data.dealers[id].name);
   const warn = document.getElementById("warn");
   if (failed.length) { warn.className = "warn show"; warn.textContent = `Last scrape couldn't read: ${failed.join(", ")}. Showing last-known values.`; }
   else { warn.className = "warn"; }
+
+  // wire metal-column clicks
+  document.querySelectorAll("th.metalcol").forEach(th => {
+    th.onclick = () => openMetal(th.dataset.metal);
+    th.onkeydown = e => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); openMetal(th.dataset.metal); } };
+  });
+
+  firstRender = false;
 }
 
+// ---- metal detail popup ----
+function openMetal(m) {
+  const data = CURRENT; if (!data) return;
+  const meta = META[m] || { label: m, color: "var(--muted)" };
+  const rows = DEALER_ORDER
+    .map(id => ({ id, d: data.dealers[id], p: data.dealers[id]?.prices?.[m] }))
+    .filter(x => x.p && x.p.ask != null && !isNaN(x.p.ask))
+    .sort((a, b) => a.p.ask - b.p.ask);
+
+  document.getElementById("modalTitle").innerHTML =
+    `<span class="dot" style="background:${meta.color}"></span>${meta.label}<span class="u">USD / oz</span>`;
+
+  if (!rows.length) {
+    document.getElementById("rank").innerHTML = `<div style="padding:24px 12px;color:var(--faint)">No prices available.</div>`;
+    document.getElementById("modalFoot").innerHTML = "";
+  } else {
+    const low = rows[0].p.ask;
+    document.getElementById("rank").innerHTML = rows.map((x, i) => {
+      const delta = x.p.ask - low;
+      const deltaHtml = i === 0
+        ? `<span class="delta best">cheapest</span>`
+        : `<span class="delta">+$${fmt(delta)} vs best</span>`;
+      const stale = x.d.ok === false ? " · stale" : "";
+      return `<div class="rankrow${i === 0 ? " top" : ""}">
+        <div class="rk">${i + 1}</div>
+        <div class="rname">${x.d.name}${deltaHtml}${stale ? `<span class="delta">${stale}</span>` : ""}</div>
+        <div class="rprice"><div class="p">$${fmt(x.p.ask)}</div>${chgHtml(x.p.change, "c")}</div>
+      </div>`;
+    }).join("");
+    const asks = rows.map(x => x.p.ask);
+    const avg = asks.reduce((a, b) => a + b, 0) / asks.length;
+    const spread = Math.max(...asks) - Math.min(...asks);
+    document.getElementById("modalFoot").innerHTML =
+      `<span>Spread <b>$${fmt(spread)}</b></span><span>Average <b>$${fmt(avg)}</b></span><span>Dealers <b>${rows.length}</b></span>`;
+  }
+
+  const ov = document.getElementById("overlay");
+  ov.classList.add("open");
+  document.getElementById("modalClose").focus();
+}
+function closeModal() { document.getElementById("overlay").classList.remove("open"); }
+document.getElementById("modalClose").addEventListener("click", closeModal);
+document.getElementById("overlay").addEventListener("click", e => { if (e.target.id === "overlay") closeModal(); });
+document.addEventListener("keydown", e => { if (e.key === "Escape") closeModal(); });
+
+// ---- theme toggle ----
+const SUN = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg>';
+const MOON = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg>';
+function syncThemeIcon() {
+  const t = document.documentElement.getAttribute("data-theme");
+  document.getElementById("themeBtn").innerHTML = t === "dark" ? SUN : MOON;
+}
+document.getElementById("themeBtn").addEventListener("click", () => {
+  const next = document.documentElement.getAttribute("data-theme") === "dark" ? "light" : "dark";
+  document.documentElement.setAttribute("data-theme", next);
+  try { localStorage.setItem("theme", next); } catch (e) {}
+  syncThemeIcon();
+});
+syncThemeIcon();
+
+// ---- load ----
 async function load() {
   const btn = document.getElementById("refreshBtn");
   btn.classList.add("spin");
@@ -314,10 +508,9 @@ async function load() {
     setTimeout(() => btn.classList.remove("spin"), 400);
   }
 }
-
 document.getElementById("refreshBtn").addEventListener("click", load);
 load();
-setInterval(load, 120000); // re-check every 2 min
+setInterval(load, 120000);
 </script>
 </body>
 </html>

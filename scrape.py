@@ -69,8 +69,9 @@ def to_num(s):
         return None
 
 
-def fetch_html(url: str) -> str:
-    if USE_PLAYWRIGHT:
+def fetch_html(url: str, render: bool = False) -> str:
+    """Fetch page HTML. render=True (or USE_PLAYWRIGHT=1) uses a real browser."""
+    if render or USE_PLAYWRIGHT:
         return _fetch_rendered(url)
     r = requests.get(url, headers=HEADERS, timeout=25)
     r.raise_for_status()
@@ -78,12 +79,18 @@ def fetch_html(url: str) -> str:
 
 
 def _fetch_rendered(url: str) -> str:
-    """Optional JS-rendered fetch. Requires: pip install playwright && playwright install chromium."""
+    """JS-rendered fetch via a real headless Chromium (defeats JS rendering / basic blocks)."""
     from playwright.sync_api import sync_playwright  # imported lazily
     with sync_playwright() as p:
-        browser = p.chromium.launch()
-        page = browser.new_page(user_agent=HEADERS["User-Agent"])
+        browser = p.chromium.launch(args=["--no-sandbox"])
+        ctx = browser.new_context(
+            user_agent=HEADERS["User-Agent"],
+            locale="en-US",
+            viewport={"width": 1366, "height": 900},
+        )
+        page = ctx.new_page()
         page.goto(url, wait_until="networkidle", timeout=45000)
+        page.wait_for_timeout(2500)  # let any late-loading price JS settle
         html = page.content()
         browser.close()
         return html
@@ -144,7 +151,8 @@ def scrape_apmex():
 
 
 def scrape_moneymetals():
-    return generic_parse(fetch_html(DEALERS["moneymetals"]["url"]))
+    # Money Metals blocks plain requests / renders prices with JS -> use a real browser.
+    return generic_parse(fetch_html(DEALERS["moneymetals"]["url"], render=True))
 
 
 def scrape_sdbullion():
