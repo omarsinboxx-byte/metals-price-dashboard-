@@ -56,7 +56,10 @@
 
   .sectionlabel{font-size:12px;font-weight:600;letter-spacing:.04em;text-transform:uppercase;color:var(--faint);margin:0 2px 10px;}
 
-  .toprow{display:grid;grid-template-columns:minmax(0,1fr) 400px;gap:22px;align-items:start;margin-bottom:26px;}
+  .toprow{display:grid;grid-template-columns:minmax(0,1fr) 460px;gap:22px;align-items:stretch;margin-bottom:26px;}
+  .toprow .col{display:flex;flex-direction:column;}
+  #metalsChart{flex:1;display:flex;flex-direction:column;}
+  #metalsChart .chartwrap{flex:1;}
   @media (max-width:1024px){.toprow{grid-template-columns:1fr;}}
 
   .board{background:var(--panel);border:1px solid var(--line);border-radius:16px;overflow:hidden;box-shadow:var(--shadow);}
@@ -164,8 +167,6 @@
     </div>
   </header>
 
-  <div class="warn" id="warn"></div>
-
   <div class="toprow">
     <div class="col">
       <div class="sectionlabel">Spot — bullion dealer comparison</div>
@@ -189,9 +190,6 @@
     <div class="chartwrap"><svg class="chart" viewBox="0 0 800 320" preserveAspectRatio="none" role="img" aria-label="Energy price history"></svg><div class="tip"></div></div>
   </div>
 
-  <p class="note">
-    <b>Spot</b> is scraped live from each dealer — tap any metal to rank all four. <b>Energy</b> and both <b>history</b> charts are daily market data from Yahoo Finance (metals & energy shown as front-month futures). Dealer rows grey out and keep their last value when a scrape fails. Data refreshes when the GitHub Action rewrites the files in <code>data/</code>.
-  </p>
 </div>
 
 <div class="overlay" id="overlay" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
@@ -247,8 +245,6 @@ function renderPrices(data){
   document.getElementById("foot").innerHTML=`<tr><td class="label dealer">Best buy</td>${cheapRow}</tr><tr><td class="label dealer">Spread <small>(max−min)</small></td>${spreadRow}</tr>`;
   document.getElementById("updated").textContent=relTime(data.updated_utc);
   const badge=document.getElementById("dataBadge");if(data.sample){badge.className="pill sample";badge.innerHTML="<i></i>sample";}else{badge.className="pill live";badge.innerHTML="<i></i>live";}
-  const failed=DEALER_ORDER.filter(id=>data.dealers[id]?.ok===false).map(id=>data.dealers[id].name);const warn=document.getElementById("warn");
-  if(failed.length){warn.className="warn show";warn.textContent=`Last scrape couldn't read: ${failed.join(", ")}. Showing last-known values.`;}else{warn.className="warn";}
   document.querySelectorAll("th.metalcol").forEach(th=>{th.onclick=()=>openMetal(th.dataset.metal);th.onkeydown=e=>{if(e.key==="Enter"||e.key===" "){e.preventDefault();openMetal(th.dataset.metal);}};});
   firstRender=false;
 }
@@ -280,7 +276,7 @@ function renderOil(oil){
 
 /* chart factory (used for metals and energy) */
 let HISTORY=null;
-function makeChart(root,keys,defaultKey){
+function makeChart(root,keys,defaultKey,W,H){
   const state={series:defaultKey,days:90};
   const svg=root.querySelector(".chart"),tip=root.querySelector(".tip"),wrap=root.querySelector(".chartwrap");
   const nameEl=root.querySelector(".name"),nowEl=root.querySelector(".now"),deltaEl=root.querySelector(".delta");
@@ -296,7 +292,7 @@ function makeChart(root,keys,defaultKey){
   function draw(){
     const P=pts();const meta=SERIES[state.series];nameEl.textContent=meta.label;
     if(P.length<2){svg.innerHTML="";nowEl.textContent="—";deltaEl.textContent="";CH=null;return;}
-    const W=800,H=320,L=54,R=14,T=14,B=28,iw=W-L-R,ih=H-T-B;
+    const L=54,R=14,T=14,B=28,iw=W-L-R,ih=H-T-B;svg.setAttribute("viewBox",`0 0 ${W} ${H}`);
     const vals=P.map(p=>p.c);let mn=Math.min(...vals),mx=Math.max(...vals);const pad=(mx-mn||mx*0.02)*0.08;mn-=pad;mx+=pad;
     const x=i=>L+(i/(P.length-1))*iw,y=v=>T+((mx-v)/(mx-mn))*ih;
     let line="";P.forEach((p,i)=>{line+=(i?"L":"M")+x(i).toFixed(2)+" "+y(p.c).toFixed(2)+" ";});
@@ -341,8 +337,8 @@ async function load(){
   setTimeout(()=>btn.classList.remove("spin"),400);
 }
 document.getElementById("refreshBtn").addEventListener("click",load);
-metalsChart=makeChart(document.getElementById("metalsChart"),METAL_KEYS,"gold");
-energyChart=makeChart(document.getElementById("energyChart"),ENERGY_KEYS,"wti");
+metalsChart=makeChart(document.getElementById("metalsChart"),METAL_KEYS,"gold",600,470);
+energyChart=makeChart(document.getElementById("energyChart"),ENERGY_KEYS,"wti",820,340);
 load();setInterval(load,120000);
 </script>
 </body>
