@@ -1,5 +1,5 @@
 {
-  "updated_utc": "2026-10-23T21:08:10Z",
+  "updated_utc": "2026-10-23T23:55:47Z",
   "sample": false,
   "metals": [
     "gold",
@@ -12,7 +12,7 @@
       "name": "JM Bullion",
       "url": "https://www.jmbullion.com",
       "ok": true,
-      "updated_utc": "2026-10-23T21:08:10Z",
+      "updated_utc": "2026-10-23T23:55:47Z",
       "prices": {
         "gold": {
           "ask": 4009.38,
@@ -23,7 +23,7 @@
           "change": null
         },
         "platinum": {
-          "ask": 1562.8,
+          "ask": 1565.8,
           "change": null
         },
         "palladium": {
@@ -36,14 +36,14 @@
       "name": "APMEX",
       "url": "https://www.apmex.com",
       "ok": true,
-      "updated_utc": "2026-10-23T21:08:10Z",
+      "updated_utc": "2026-10-23T23:55:47Z",
       "prices": {
         "gold": {
-          "ask": 4015.7,
+          "ask": 4011.7,
           "change": 25.4
         },
         "silver": {
-          "ask": 54.73,
+          "ask": 54.67,
           "change": 0.61
         },
         "platinum": {
@@ -84,7 +84,7 @@
       "name": "SD Bullion",
       "url": "https://sdbullion.com",
       "ok": true,
-      "updated_utc": "2026-10-23T21:08:15Z",
+      "updated_utc": "2026-10-23T23:55:52Z",
       "prices": {
         "gold": {
           "ask": 4006.88,
@@ -95,8 +95,8 @@
           "change": -0.61
         },
         "platinum": {
-          "ask": 1561.8,
-          "change": -12.4
+          "ask": 1564.8,
+          "change": -9.4
         }
       }
     }
