@@ -1,5 +1,5 @@
 {
-  "updated_utc": "2026-11-06T05:39:13Z",
+  "updated_utc": "2026-11-06T14:03:16Z",
   "sample": false,
   "metals": [
     "gold",
@@ -12,22 +12,22 @@
       "name": "JM Bullion",
       "url": "https://www.jmbullion.com",
       "ok": true,
-      "updated_utc": "2026-11-06T05:39:13Z",
+      "updated_utc": "2026-11-06T14:03:16Z",
       "prices": {
         "gold": {
-          "ask": 4056.48,
+          "ask": 4060.92,
           "change": null
         },
         "silver": {
-          "ask": 52.21,
-          "change": 0.01
+          "ask": 52.44,
+          "change": 0.24
         },
         "platinum": {
-          "ask": 1526.3,
-          "change": null
+          "ask": 1528.0,
+          "change": 0.85
         },
         "palladium": {
-          "ask": 1041.54,
+          "ask": 1036.22,
           "change": null
         }
       }
@@ -36,23 +36,23 @@
       "name": "APMEX",
       "url": "https://www.apmex.com",
       "ok": true,
-      "updated_utc": "2026-11-06T05:39:13Z",
+      "updated_utc": "2026-11-06T14:03:16Z",
       "prices": {
         "gold": {
-          "ask": 4064.4,
-          "change": 44.9
+          "ask": 4067.6,
+          "change": 41.7
         },
         "silver": {
-          "ask": 52.41,
-          "change": 0.28
+          "ask": 52.61,
+          "change": 0.08
         },
         "platinum": {
-          "ask": 1526.0,
-          "change": 6.6
+          "ask": 1529.2,
+          "change": 3.4
         },
         "palladium": {
-          "ask": 1053.8,
-          "change": 13.4
+          "ask": 1047.9,
+          "change": 19.3
         }
       }
     },
@@ -84,19 +84,19 @@
       "name": "SD Bullion",
       "url": "https://sdbullion.com",
       "ok": true,
-      "updated_utc": "2026-11-06T05:39:18Z",
+      "updated_utc": "2026-11-06T14:03:22Z",
       "prices": {
         "gold": {
-          "ask": 4054.07,
-          "change": -44.9
+          "ask": 4059.49,
+          "change": -39.49
         },
         "silver": {
-          "ask": 52.11,
-          "change": -0.23
+          "ask": 52.36,
+          "change": 0.01
         },
         "platinum": {
-          "ask": 1525.3,
-          "change": -1.35
+          "ask": 1527.3,
+          "change": 0.65
         }
       }
     }
