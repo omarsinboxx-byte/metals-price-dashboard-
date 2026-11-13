@@ -1,5 +1,5 @@
 {
-  "updated_utc": "2026-11-12T20:17:40Z",
+  "updated_utc": "2026-11-13T01:22:06Z",
   "sample": false,
   "metals": [
     "gold",
@@ -12,23 +12,23 @@
       "name": "JM Bullion",
       "url": "https://www.jmbullion.com",
       "ok": true,
-      "updated_utc": "2026-11-12T20:17:40Z",
+      "updated_utc": "2026-11-13T01:22:06Z",
       "prices": {
         "gold": {
-          "ask": 3898.47,
-          "change": null
+          "ask": 3919.82,
+          "change": 35.45
         },
         "silver": {
-          "ask": 50.8,
-          "change": null
+          "ask": 51.19,
+          "change": 0.72
         },
         "platinum": {
-          "ask": 1531.0,
-          "change": null
+          "ask": 1538.0,
+          "change": 9.3
         },
         "palladium": {
-          "ask": 1020.29,
-          "change": null
+          "ask": 1031.08,
+          "change": 12.23
         }
       }
     },
@@ -36,23 +36,23 @@
       "name": "APMEX",
       "url": "https://www.apmex.com",
       "ok": true,
-      "updated_utc": "2026-11-12T20:17:41Z",
+      "updated_utc": "2026-11-13T01:22:07Z",
       "prices": {
         "gold": {
-          "ask": 3905.2,
-          "change": 103.2
+          "ask": 3926.9,
+          "change": 29.4
         },
         "silver": {
-          "ask": 50.97,
-          "change": 1.6
+          "ask": 51.39,
+          "change": 0.43
         },
         "platinum": {
-          "ask": 1535.8,
-          "change": 18.3
+          "ask": 1543.4,
+          "change": 8.6
         },
         "palladium": {
-          "ask": 1031.2,
-          "change": 35.5
+          "ask": 1044.4,
+          "change": 12.7
         }
       }
     },
@@ -84,19 +84,19 @@
       "name": "SD Bullion",
       "url": "https://sdbullion.com",
       "ok": true,
-      "updated_utc": "2026-11-12T20:17:46Z",
+      "updated_utc": "2026-11-13T01:22:12Z",
       "prices": {
         "gold": {
-          "ask": 3895.68,
-          "change": -103.29
+          "ask": 3918.08,
+          "change": 29.97
         },
         "silver": {
-          "ask": 50.69,
-          "change": -1.53
+          "ask": 51.13,
+          "change": 0.51
         },
         "platinum": {
-          "ask": 1530.0,
-          "change": -15.4
+          "ask": 1537.0,
+          "change": 8.8
         }
       }
     }
