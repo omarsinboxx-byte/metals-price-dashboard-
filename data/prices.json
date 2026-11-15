@@ -1,5 +1,5 @@
 {
-  "updated_utc": "2026-11-15T07:38:58Z",
+  "updated_utc": "2026-11-15T15:27:39Z",
   "sample": false,
   "metals": [
     "gold",
@@ -11,8 +11,8 @@
     "jmbullion": {
       "name": "JM Bullion",
       "url": "https://www.jmbullion.com",
-      "ok": false,
-      "updated_utc": "2026-11-15T00:51:44Z",
+      "ok": true,
+      "updated_utc": "2026-11-15T15:27:39Z",
       "prices": {
         "gold": {
           "ask": 3896.22,
@@ -36,7 +36,7 @@
       "name": "APMEX",
       "url": "https://www.apmex.com",
       "ok": true,
-      "updated_utc": "2026-11-15T07:38:58Z",
+      "updated_utc": "2026-11-15T15:27:40Z",
       "prices": {
         "gold": {
           "ask": 3894.6,
@@ -84,7 +84,7 @@
       "name": "SD Bullion",
       "url": "https://sdbullion.com",
       "ok": true,
-      "updated_utc": "2026-11-15T07:39:05Z",
+      "updated_utc": "2026-11-15T15:27:44Z",
       "prices": {
         "gold": {
           "ask": 3893.72,
